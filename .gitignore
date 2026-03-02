@@ -1,0 +1,7 @@
+# Generated per-user — don't commit
+skill-router/references/registry.tsv
+
+# Build tool — not needed by users
+generate-diagram.py
+
+.DS_Store
