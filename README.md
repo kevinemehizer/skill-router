@@ -116,6 +116,24 @@ NAME    TYPE    CATEGORY    STATUS    PATH    KEYWORDS    DESCRIPTION
 seo     skill   seo         disabled  ~/.claude/skills-disabled/seo    seo,audit,schema    Full SEO analysis
 ```
 
+## Important: What the Router Can and Can't Do
+
+The router makes **disabled skills and commands** work seamlessly on demand — Claude reads their instructions and follows them as if they were enabled. No restart needed.
+
+However, **disabled plugins and connectors are different.** Plugins provide MCP tools that must be loaded when Claude Code starts. The router **cannot** enable a disabled plugin mid-session. Here's what happens:
+
+| Capability Type | Can the router load it on demand? |
+|----------------|----------------------------------|
+| Skills (enabled or disabled) | **Yes** — reads SKILL.md and follows it |
+| Commands (enabled or disabled) | **Yes** — reads the .md file and follows it |
+| Agents (disabled) | **Yes** — reads config and spawns agent |
+| Superpowers sub-skills | **Yes** — invokes via Skill tool |
+| **Plugins / Connectors (disabled)** | **No** — tells you which plugin to enable, then you restart |
+
+If you're using the **Claude Code Desktop app** and have connectors/plugins disabled, the router will tell you exactly which one to turn on — but you'll need to enable it in settings and restart the app yourself. This is a platform limitation, not a router limitation.
+
+**Tip:** If you frequently need a specific plugin, just keep it enabled. The token savings from the router come primarily from skills and commands (which make up the vast majority of capabilities), not plugins.
+
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI or Desktop app
