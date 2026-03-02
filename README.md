@@ -36,7 +36,7 @@ Disabled skills work as if they were enabled. Zero cost until invoked.
 ## Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/skill-router.git
+git clone https://github.com/kevinemehizer/skill-router.git
 cd skill-router
 bash install.sh
 ```
