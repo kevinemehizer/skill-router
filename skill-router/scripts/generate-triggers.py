@@ -125,7 +125,13 @@ def generate_trigger(name, description, category):
         # --- Pattern 2: Descriptive phrase (not "When the user...") ---
         first_sentence = re.split(r'\.\s', desc)[0].strip().rstrip('.')
         if len(first_sentence) > 5:
-            triggers.append(first_sentence.lower())
+            # Truncate at colon/dash to avoid grabbing long lists that
+            # contain commas (commas are the trigger delimiter)
+            short = re.split(r'[:\u2014\u2013]', first_sentence)[0].strip().rstrip('.,;')
+            if len(short) > 5:
+                triggers.append(short.lower())
+            else:
+                triggers.append(first_sentence.lower())
 
     # Add name as phrase if not already covered
     name_lower = name_phrase.lower()
