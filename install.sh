@@ -20,6 +20,7 @@ fi
 mkdir -p "$DEST/scripts" "$DEST/references"
 cp "$SCRIPT_DIR/skill-router/SKILL.md" "$DEST/SKILL.md"
 cp "$SCRIPT_DIR/skill-router/scripts/rebuild-registry.sh" "$DEST/scripts/rebuild-registry.sh"
+cp "$SCRIPT_DIR/skill-router/scripts/generate-triggers.py" "$DEST/scripts/generate-triggers.py"
 chmod +x "$DEST/scripts/rebuild-registry.sh"
 
 # 3. Generate the registry

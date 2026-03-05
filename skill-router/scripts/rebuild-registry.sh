@@ -276,6 +276,16 @@ for sp in writing-plans systematic-debugging test-driven-development verificatio
   echo -e "superpowers:${sp}\tsuperpowers\t${category}\tenabled\tsuperpowers:${sp}\t${keywords}\t${short_desc}" >> "$OUT"
 done
 
+# --- 8. Generate trigger phrases ---
+# Reads each skill's source file for manual trigger: overrides,
+# auto-generates triggers from descriptions for the rest
+TRIGGER_SCRIPT="$CLAUDE_DIR/skills/skill-router/scripts/generate-triggers.py"
+if [ -f "$TRIGGER_SCRIPT" ]; then
+  python3 "$TRIGGER_SCRIPT" "$OUT"
+else
+  echo "  Warning: generate-triggers.py not found — skipping trigger generation"
+fi
+
 # --- Summary ---
 total=$(tail -n +2 "$OUT" | wc -l | tr -d ' ')
-echo "Registry generated: $OUT ($total entries)"
+echo "Registry rebuilt: $OUT ($total entries)"

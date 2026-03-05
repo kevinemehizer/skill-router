@@ -21,8 +21,10 @@ This skill is located at: `~/.claude/skills/skill-router/`
 ## Lookup Protocol
 
 1. **Read the registry**: Use the Read tool to load `~/.claude/skills/skill-router/references/registry.tsv`
-2. **Search for matches**: Scan NAME, CATEGORY, KEYWORDS, and DESCRIPTION columns for the best match to the user's request
-3. **If multiple matches**: Prefer the most specific match. If still ambiguous, list the top 3 options and ask the user to pick.
+2. **Search for matches** (in priority order):
+   - **TRIGGER** (primary): Comma-separated intent phrases that describe when to use each capability. Count how many phrases match the user's request — more matches = better fit.
+   - **NAME, KEYWORDS, CATEGORY, DESCRIPTION** (fallback): Use if no strong trigger match.
+3. **If multiple matches**: Prefer the entry whose TRIGGER phrases most closely match the user's intent. If still ambiguous, list the top 3 options and ask the user to pick.
 4. **Activate the match** using the rules below
 
 ## Activation Rules by Type

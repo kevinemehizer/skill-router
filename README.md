@@ -15,10 +15,42 @@ Every enabled skill in Claude Code loads its full description into every session
 The skill-router sits in every session (~150 tokens) and knows about everything you have installed. When you ask for something specialized, it:
 
 1. Searches a lightweight TSV registry of all your capabilities
-2. Finds the best match
+2. Matches your intent against **trigger phrases** — natural-language descriptions of when to use each skill
 3. Reads the matched skill's instructions and follows them on the fly
 
 Disabled skills work as if they were enabled. Zero cost until invoked.
+
+## Smart Triggers
+
+The router uses **trigger phrases** as its primary matching signal — not just keywords or names.
+
+When you rebuild the registry, the router auto-generates intent-aware trigger phrases for every installed skill by analyzing each skill's description. These phrases match how you'd naturally ask for help:
+
+| You say | Trigger matches | Skill loaded |
+|---------|----------------|--------------|
+| "Help me with SEO" | `improve SEO, comprehensive seo analysis` | `seo` |
+| "Write copy for my landing page" | `write, rewrite, or improve marketing copy` | `copywriting` |
+| "Audit my Google Ads" | `google ads deep analysis` | `ads-google` |
+| "Optimize my signup flow" | `optimize signup, registration, account creation` | `signup-flow-cro` |
+
+### How triggers are generated
+
+1. **Manual override** — Add a `trigger:` field to your skill's YAML frontmatter for perfect control
+2. **Auto-generated** — If no manual trigger exists, the rebuild script analyzes the skill's full description and generates trigger phrases automatically
+
+### Manual trigger example
+
+Add `trigger:` to any skill's `SKILL.md` frontmatter:
+
+```yaml
+---
+name: seo
+description: Comprehensive SEO analysis for any website or business type.
+trigger: audit website SEO, fix search rankings, technical SEO check, optimize metadata
+---
+```
+
+The router will use your manual trigger verbatim instead of auto-generating one.
 
 ## What It Routes
 
@@ -43,7 +75,7 @@ bash install.sh
 
 The install script will:
 - Copy the skill-router to `~/.claude/skills/skill-router/`
-- Scan your installed capabilities and generate the registry
+- Scan your installed capabilities and generate the registry with auto-triggers
 - Add a routing instruction to your `~/.claude/CLAUDE.md`
 
 Then restart Claude Code.
@@ -98,13 +130,16 @@ The script scans:
 - `~/.claude/settings.json` (plugins)
 - Superpowers sub-skills (hardcoded list)
 
+Then auto-generates trigger phrases for every entry.
+
 ## How It Works
 
 ```
 ~/.claude/skills/skill-router/
 ├── SKILL.md                        # Router logic + activation protocol
 ├── scripts/
-│   └── rebuild-registry.sh         # Generates the registry
+│   ├── rebuild-registry.sh         # Generates the registry
+│   └── generate-triggers.py        # Auto-generates trigger phrases
 └── references/
     └── registry.tsv                # Generated index (not committed)
 ```
@@ -112,9 +147,15 @@ The script scans:
 The registry is a tab-separated file with one row per capability:
 
 ```
-NAME    TYPE    CATEGORY    STATUS    PATH    KEYWORDS    DESCRIPTION
-seo     skill   seo         disabled  ~/.claude/skills-disabled/seo    seo,audit,schema    Full SEO analysis
+NAME    TYPE    CATEGORY    STATUS    PATH    KEYWORDS    TRIGGER    DESCRIPTION
+seo     skill   seo         disabled  ...     seo,audit   comprehensive seo analysis, improve SEO    Full SEO analysis
 ```
+
+**Matching priority:**
+1. **TRIGGER** — intent phrases (primary signal)
+2. **NAME** — exact skill name
+3. **KEYWORDS** — extracted terms
+4. **CATEGORY / DESCRIPTION** — broad fallback
 
 ## Important: What the Router Can and Can't Do
 
@@ -138,7 +179,7 @@ If you're using the **Claude Code Desktop app** and have connectors/plugins disa
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) CLI or Desktop app
 - Bash (macOS/Linux)
-- Python 3 (for plugin detection from settings.json)
+- Python 3 (for trigger generation and plugin detection)
 
 ## License
 
